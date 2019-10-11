@@ -1,5 +1,5 @@
-import titleize from 'titleize';
+// import titleize from 'titleize';
 
 export const rentalType = isShared =>  isShared ? 'shared' : 'entire'; 
 
-export const toUpperCase = value => value ? titleize(value) : '';
+// export const toUpperCase = value => value ? titleize(value) : '';
