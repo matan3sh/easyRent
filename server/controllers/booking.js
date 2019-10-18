@@ -46,18 +46,19 @@ exports.createBooking = function (req, res) {
 
 function isValidBooking(proposedBooking, rental) {
     let isValid = true;
-
+  
     if (rental.bookings && rental.bookings.length > 0) {
-
-        isValid = rental.bookings.every(function (booking) {
-            const proposedStart = moment(proposedBooking.startAt);
-            const proposedEnd = moment(proposedBooking.endAt);
-
-            const actualStart = moment(booking.startAt);
-            const actualEnd = moment(booking.endAt);
-
-            return ((actualStart < proposedStart && actualEnd < proposedStart) || (proposedEnd < actualEnd && proposedEnd < actualStart));
-        });
+  
+      isValid = rental.bookings.every(function(booking) {
+        const proposedStart = moment(proposedBooking.startAt);
+        const proposedEnd = moment(proposedBooking.endAt);
+  
+        const actualStart = moment(booking.startAt);
+        const actualEnd = moment(booking.endAt);
+  
+        return ((actualStart < proposedStart && actualEnd <= proposedStart) || (proposedEnd < actualEnd && proposedEnd <= actualStart));
+      });
     }
+  
     return isValid;
-}
+  }
