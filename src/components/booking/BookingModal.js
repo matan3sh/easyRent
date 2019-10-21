@@ -3,14 +3,14 @@ import Modal from 'react-responsive-modal';
 import { BwmResError } from 'components/shared/form/BwmResError';
 
 export function BookingModal(props) {
-    const { open, closeModal, booking, confirmModal, errors } = props;
+    const { open, closeModal, booking, confirmModal, errors, rentalPrice } = props;
     return (
         <Modal open={open} onClose={closeModal} little classNames={{ modal: 'booking-modal' }}>
             <h4 className='modal-title title'>Confirm Booking </h4>
             <p className='dates'>{booking.startAt} / {booking.endAt}</p>
             <div className='modal-body'>
                 <em>{booking.days}</em> Nights /
-                <em>{booking.rental.dailyRate}$</em> Per Night
+                <em>{rentalPrice}$</em> Per Night
                 <p>Guests: <em>{booking.guests}</em></p>
                 <p>Price: <em>{booking.totalPrice}$ </em></p>
                 <p>Do you confirm your booking for selected days?</p>

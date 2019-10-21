@@ -1,5 +1,6 @@
 import React from 'react';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
+import { ToastContainer, toast } from 'react-toastify';
 import { BookingModal } from './BookingModal';
 import { getRangeOfDates } from 'helpers';
 
@@ -18,8 +19,7 @@ export class Booking extends React.Component {
       proposedBooking: {
         startAt: '',
         endAt: '',
-        guests: 0,
-        rental: {}
+        guests: ''
       },
       modal: {
         open: false
@@ -71,7 +71,7 @@ export class Booking extends React.Component {
     this.setState({
       proposedBooking: {
         ...this.state.proposedBooking,
-        guests: parseInt(event.target.value)
+        guests: parseInt(event.target.value, 10)
       }
     })
   }
@@ -82,6 +82,17 @@ export class Booking extends React.Component {
         open: false
       }
     });
+  }
+
+  addNewBookedOutDates(booking) {
+    const dateRange = getRangeOfDates(booking.startAt, booking.endAt);
+    this.bookedOutDates.push(...dateRange);
+  }
+
+  resetData() {
+    this.dateRef.current.value = '';
+
+    this.setState({proposedBooking: {guests: ''}});
   }
 
   confirmProposedData() {
@@ -105,7 +116,10 @@ export class Booking extends React.Component {
   reserveRental() {
     actions.createBooking(this.state.proposedBooking).then(
       (booking) => {
-
+        this.addNewBookedOutDates(booking);
+        this.cancelConfirmation();
+        this.resetData();
+        toast.success('Booking has been succesfuly created! Enjoy :)')
       },
       (errors) => {
         this.setState({errors});
@@ -118,6 +132,7 @@ export class Booking extends React.Component {
 
     return (
       <div className='booking'>
+        <ToastContainer />
         <h3 className='booking-price'>${rental.dailyRate} <span className='booking-per-night'>per night</span></h3>
         <hr></hr>
         <div className='form-group'>
@@ -132,6 +147,7 @@ export class Booking extends React.Component {
         <div className='form-group'>
           <label htmlFor='guests'>Guests</label>
           <input onChange={(event) => { this.selectGuests(event) }}
+            value={guests}
             type='number'
             className='form-control'
             id='guests'
@@ -149,7 +165,8 @@ export class Booking extends React.Component {
                       closeModal={this.cancelConfirmation}
                       confirmModal={this.reserveRental} 
                       booking={this.state.proposedBooking}
-                      errors={this.state.errors} />
+                      errors={this.state.errors} 
+                      rentalPrice={rental.dailyRate} />
       </div>
     )
   }
