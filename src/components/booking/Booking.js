@@ -121,6 +121,7 @@ export class Booking extends React.Component {
         this.resetData();
         toast.success('Booking has been succesfuly created! Enjoy :)')
       },
+      
       (errors) => {
         this.setState({errors});
       })
