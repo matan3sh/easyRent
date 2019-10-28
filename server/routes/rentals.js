@@ -10,6 +10,22 @@ router.get('/secret', UserCtrl.authMiddleware, function (req, res) {
     res.json({ "secret": true });
 });
 
+router.get('/manage', UserCtrl.authMiddleware, function (req, res) {
+    const user = res.locals.user;
+
+    Rental
+        .where({ user })
+        .populate('bookings')
+        .exec(function (err, foundRentals) {
+
+            if (err) {
+                return res.status(422).send({ errors: normalizeErrors(err.errors) });
+            }
+
+            return res.json(foundRentals);
+        });
+});
+
 router.get('/:id', function (req, res) {
     const rentalId = req.params.id;
 
@@ -52,24 +68,24 @@ router.delete('/:id', UserCtrl.authMiddleware, function (req, res) {
                     return res.status(422).send({ errors: normalizeErrors(err.errors) });
                 }
 
-                return res.json({'status': 'deleted'});
+                return res.json({ 'status': 'deleted' });
             });
-        })
+        });
 });
 
-router.post('', UserCtrl.authMiddleware, function(req, res) {
+router.post('', UserCtrl.authMiddleware, function (req, res) {
     const { title, city, street, category, image, shared, bedrooms, description, dailyRate } = req.body;
     const user = res.locals.user;
 
-    const rental = new Rental({title, city, street, category, image, shared, bedrooms, description, dailyRate});
+    const rental = new Rental({ title, city, street, category, image, shared, bedrooms, description, dailyRate });
     rental.user = user;
 
-    Rental.create(rental, function(err, newRental) {
+    Rental.create(rental, function (err, newRental) {
         if (err) {
             return res.status(422).send({ errors: normalizeErrors(err.errors) });
-        } 
-        
-        User.update({_id: user.id}, { $push: {rentals: newRental}}, function(){});
+        }
+
+        User.update({ _id: user.id }, { $push: { rentals: newRental } }, function () { });
         return res.json(newRental);
     });
 });
