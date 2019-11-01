@@ -1,9 +1,19 @@
-import titleize from 'titleize';
+// import titleize from 'titleize';
 import * as moment from 'moment';
 
 export const rentalType = isShared =>  isShared ? 'shared' : 'entire'; 
 
+export const titleize = string => {
+    if (typeof string !== 'string') {
+		throw new TypeError('Expected a string');
+	}
+ 
+	return string.toLowerCase().replace(/(?:^|\s|-)\S/g, function(x){return x.toUpperCase()});
+}
+
 export const toUpperCase = value => value ? titleize(value) : '';
+
+export const pretifyDate = date => moment(date).format('MMM Do YY');
 
 export const getRangeOfDates = (startAt, endAt, dateFormat = 'Y/MM/DD') => {
     const tempDates = [];
